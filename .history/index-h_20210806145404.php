@@ -1,0 +1,187 @@
+<?php ob_start(); //NE PAS MODIFIER 
+$titre = "Un catalogue de produits"; //Mettre le nom du titre de la page que vous voulez
+?>
+
+<!-- mettre ici le code -->
+<?php
+
+/* Connexion à une base MySQL avec l'invocation de pilote */
+$dsn = 'mysql:dbname=catalogue;host=127.0.0.1';
+$user = 'root';
+$password = '';
+
+// Ajout d'options dans $pdo pour éviter le mauvais affichage des cractères accentués
+$options = array(
+    PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"
+);
+
+try {
+    //  $pdo = new PDO($dsn, $user, $password);
+    $pdo = new PDO($dsn, $user, $password, $options);
+} catch (PDOException $e) {
+    echo "La connexion a échoué :" . $e->getMessage();
+}
+$req = "SELECT * FROM projet";
+$query = $pdo->prepare($req);
+$query->execute();
+$projets = $query->fetchAll(PDO::FETCH_ASSOC);
+
+/*  echo "<pre>";
+    print_r($projets);
+    echo "</pre>";
+*/
+
+class Projet
+{
+    private $libelle;
+    private $description;
+    private $image;
+
+
+public function __construct($libelle, $description, $image){
+    $this->setLibelle($libelle);
+    $this->setDescription($description);
+    $this->setImage($image);
+
+}
+
+
+    /**
+     * Get the value of libelle
+     */
+    public function getLibelle()
+    {
+        return $this->libelle;
+    }
+
+    /**
+     * Set the value of libelle
+     *
+     * @return  self
+     */
+    public function setLibelle($libelle)
+    {
+        $this->libelle = $libelle;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of description
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * Set the value of description
+     *
+     * @return  self
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of image
+     */
+    public function getImage()
+    {
+        return $this->image;
+    }
+
+    /**
+     * Set the value of image
+     *
+     * @return  self
+     */
+    public function setImage($image)
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+}
+
+?>
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Catalogue - Projets</title>
+</head>
+
+<body>
+    <h1>Mes Projets</h1>
+
+    <?php foreach ($projets as $projet) : ?>
+        <div class="card" style="width: 18rem;">
+            <img src="./source/Jeux.png" class="card-img-top perso_imgAliment">
+            <div class="card-body">
+                <h5 class="card-title"><?= $projet->getLibelle() ?></h5>
+                <p class="card-text"><?= $projet->getDescription() ?></p>
+                <a href="#" class="btn btn-primary">JavaScript</a>
+            </div>
+        </div>
+    <?php endforeach; ?>
+
+
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<?php
+/************************
+ * NE PAS MODIFIER
+ * PERMET d INCLURE LE MENU ET LE TEMPLATE
+ ************************/
+$content = ob_get_clean();
+require "../../../global/common/template.php";
+?>
+
+
+
+<?php
+/* 
+Etapes d'analyse de conception :
+1- tables à créer ?     ->  table produits et table types
+2- infos à conserver ?  ->  Produits : nom, image, description, type 
+
+(le type est placé à l'exterieur de la table Produit pour assurer la
+cohérence : si jamais transcriptions différentes des types. On peut mettre
+le type dans la table Produits si on l'enregistre dans la BD mysql en tant 
+qu'énumération "enum" comme varchar, int etc..ca permet d'avoir une liste de
+valeur pour type définies à l'avance mais ç'est compliqué de le traiter en 
+php : il faut créer des fonctions dédiées pour décomposer l'information. 
+D'où l'interte d'utiliser une table dédiée pour type.)
+                        -> Types : 
+
+3- type de données ?
+4- impact sur le code ?
+*/
+?>
