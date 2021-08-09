@@ -59,7 +59,7 @@ $projets = $query->fetchAll(PDO::FETCH_ASSOC);
                         <!-- Faire une une requête sur la table Type pour récuperer l'info de l'idType 
                     pas le idType lui-même qui n'est qu'un chiffre dans la table Projet -->
                         <?php
-                        $req2 = "SELECT * FROM type WHERE idType = :idType";
+                        $req2 = "SELECT * FROM type WHERE idType = $projet[]:idType";
                         $query = $pdo->prepare($req2);
                         $query->bindValue(":idType", $projet["idType"], PDO::PARAM_INT);
                         $query->execute();
